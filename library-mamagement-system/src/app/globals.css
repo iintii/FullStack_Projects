@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@theme {
+  --font-sans: var(--font-work-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif:
+    var(--font-playfair), ui-serif, Georgia, Cambria, "Times New Roman", Times,
+    serif;
+}
+
+:root {
+  --daisyui-theme: forest;
+}
