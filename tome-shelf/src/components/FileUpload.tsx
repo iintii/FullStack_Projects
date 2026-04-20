@@ -1,6 +1,6 @@
 "use client";
 
-import { IKImage, IKUpload, ImageKitProvider } from "@imagekit/next";
+import { Image, upload } from "@imagekit/next";
 import { useRef, useState } from "react";
 
 const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY;
@@ -27,70 +27,98 @@ export default function FileUpload({ onSuccess }: FileUploadProps) {
     }
   };
 
-  return (
-    <ImageKitProvider
-      publicKey={publicKey}
-      urlEndpoint={urlEndpoint}
-      authenticator={authenticator}
-    >
-      <div className="form-control w-full max-w-xs">
-        {/* Hidden Actual Input handled by SDK */}
-        <IKUpload
-          ref={uploadRef}
-          onError={(err) => setError(err.message)}
-          onSuccess={(res) => {
-            setPath(res.filePath);
-            onSuccess(res.filePath);
-            setProgress(0);
-          }}
-          onUploadProgress={(evt) => {
-            const p = Math.round((evt.loaded / evt.total) * 100);
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setError(null);
+      
+      if (!publicKey) {
+        throw new Error("Public key is not configured");
+      }
+
+      const auth = await authenticator();
+      
+      const uploadResponse = await upload({
+        file,
+        fileName: file.name,
+        publicKey,
+        signature: auth.signature,
+        token: auth.token,
+        expire: auth.expire,
+        folder: auth.folder,
+        onProgress: (event: ProgressEvent) => {
+          if (event.total > 0) {
+            const p = Math.round((event.loaded / event.total) * 100);
             setProgress(p);
-          }}
-          className="hidden"
-        />
+          }
+        },
+      });
 
-        {/* Custom UI Trigger */}
-        <button
-          className="btn btn-outline btn-primary w-full"
-          onClick={(e) => {
-            e.preventDefault();
-            uploadRef.current?.click();
-          }}
-        >
-          {progress > 0 && progress < 100 ? (
-            <span className="loading loading-spinner"></span>
-          ) : (
-            "Upload ID Card"
-          )}
-        </button>
+      if (uploadResponse.filePath) {
+        setPath(uploadResponse.filePath);
+        onSuccess(uploadResponse.filePath);
+        setProgress(0);
+      } else {
+        throw new Error("Upload failed: no file path returned");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed");
+    }
+  };
 
-        {progress > 0 && progress < 100 && (
-          <progress
-            className="progress progress-primary w-full mt-2"
-            value={progress}
-            max="100"
-          ></progress>
+  return (
+    <div className="form-control w-full max-w-xs">
+      {/* Hidden File Input */}
+      <input
+        ref={uploadRef}
+        type="file"
+        onChange={handleFileChange}
+        className="hidden"
+        accept="image/*"
+      />
+
+      {/* Custom UI Trigger */}
+      <button
+        className="btn btn-outline btn-primary w-full"
+        onClick={(e) => {
+          e.preventDefault();
+          uploadRef.current?.click();
+        }}
+      >
+        {progress > 0 && progress < 100 ? (
+          <span className="loading loading-spinner"></span>
+        ) : (
+          "Upload ID Card"
         )}
+      </button>
 
-        {path && (
-          <div className="mt-4">
-            <p className="text-success text-sm mb-2">Upload Complete!</p>
-            <div className="avatar">
-              <div className="w-24 rounded">
-                <IKImage
-                  path={path}
-                  width={200}
-                  height={200}
-                  alt="Uploaded ID"
-                />
-              </div>
+      {progress > 0 && progress < 100 && (
+        <progress
+          className="progress progress-primary w-full mt-2"
+          value={progress}
+          max="100"
+        ></progress>
+      )}
+
+      {path && (
+        <div className="mt-4">
+          <p className="text-success text-sm mb-2">Upload Complete!</p>
+          <div className="avatar">
+            <div className="w-24 rounded">
+              <Image
+                src={path}
+                width={200}
+                height={200}
+                alt="Uploaded ID"
+              />
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {error && <p className="text-error text-sm mt-2">{error}</p>}
-      </div>
-    </ImageKitProvider>
+      {error && <p className="text-error text-sm mt-2">{error}</p>}
+    </div>
   );
 }

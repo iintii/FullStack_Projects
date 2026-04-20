@@ -1,7 +1,7 @@
 "use client";
 
 import FileUpload from "./FileUpload";
-import { IKImage } from "@imagekit/next";
+import { Image, ImageKitProvider } from "@imagekit/next";
 import { updateUniversityCard } from "@/src/lib/actions/user";
 import { useState } from "react";
 
@@ -18,33 +18,33 @@ export default function IdCard({ currentCard }: { currentCard: string }) {
   const hasValidCard = card && card !== "/placeholder-card.png";
 
   return (
-    <div className="card bg-base-200/30 backdrop-blur-md shadow-xl border border-white/5 h-full">
-      <div className="card-body items-center text-center">
-        <h2 className="card-title mb-4">University ID</h2>
+    <ImageKitProvider urlEndpoint={urlEndpoint || ""}>
+      <div className="card bg-base-200/30 backdrop-blur-md shadow-xl border border-white/5 h-full">
+        <div className="card-body items-center text-center">
+          <h2 className="card-title mb-4">University ID</h2>
 
-        {/* 1. Display Card (if valid) */}
-        {hasValidCard ? (
-          <div className="flex flex-col gap-2 mb-6">
-            <div className="avatar">
-              <div className="w-48 rounded-xl ring ring-primary ring-offset-base-100 ring-offset-2">
-                <IKImage
-                  urlEndpoint={urlEndpoint}
-                  path={card}
-                  width={300}
-                  height={200}
-                  alt="University ID"
-                />
+          {/* 1. Display Card (if valid) */}
+          {hasValidCard ? (
+            <div className="flex flex-col gap-2 mb-6">
+              <div className="avatar">
+                <div className="w-48 rounded-xl ring ring-primary ring-offset-base-100 ring-offset-2">
+                  <Image
+                    src={card}
+                    width={300}
+                    height={200}
+                    alt="University ID"
+                  />
+                </div>
+              </div>
+              <div className="badge badge-success gap-2 mx-auto">
+                ✓ Verified Student
               </div>
             </div>
-            <div className="badge badge-success gap-2 mx-auto">
-              ✓ Verified Student
+          ) : (
+            <div className="mb-6 p-4 bg-base-200 rounded-lg border-2 border-dashed border-base-300">
+              <p className="text-sm opacity-50">No ID uploaded yet</p>
             </div>
-          </div>
-        ) : (
-          <div className="mb-6 p-4 bg-base-200 rounded-lg border-2 border-dashed border-base-300">
-            <p className="text-sm opacity-50">No ID uploaded yet</p>
-          </div>
-        )}
+          )}
 
         {/* 2. Upload Button (Always Visible) */}
         <div className="w-full mt-auto">
@@ -58,7 +58,8 @@ export default function IdCard({ currentCard }: { currentCard: string }) {
             </p>
           )}
         </div>
+        </div>
       </div>
-    </div>
+    </ImageKitProvider>
   );
 }
