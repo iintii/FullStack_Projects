@@ -9,12 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@imagekit/next": "^2.1.5",
     "@neondatabase/serverless": "^1.0.2",
     "@upstash/redis": "^1.36.2",
     "bcryptjs": "^3.0.3",
     "drizzle-orm": "^0.45.1",
     "imagekit": "^6.0.0",
-    "imagekitio-next": "^1.0.1",
     "lucide-react": "^0.563.0",
     "next": "16.1.6",
     "next-auth": "^5.0.0-beta.30",

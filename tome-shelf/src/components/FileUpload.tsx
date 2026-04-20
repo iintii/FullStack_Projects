@@ -1,6 +1,6 @@
 "use client";
 
-import { IKImage, IKUpload, ImageKitProvider } from "imagekitio-next";
+import { IKImage, IKUpload, ImageKitProvider } from "@imagekit/next";
 import { useRef, useState } from "react";
 
 const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY;

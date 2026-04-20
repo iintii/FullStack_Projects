@@ -1,7 +1,7 @@
 "use client";
 
 import FileUpload from "./FileUpload";
-import { IKImage } from "imagekitio-next";
+import { IKImage } from "@imagekit/next";
 import { updateUniversityCard } from "@/src/lib/actions/user";
 import { useState } from "react";
 
