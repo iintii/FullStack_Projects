@@ -1,0 +1,16 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* DaisyUI Theme Config */
+@theme {
+  --color-*: initial; 
+}
+
+:root {
+    --daisyui-theme: dim; /* 'dim' is a great, professional dark grey theme */
+}
+
+/* Ensure the background covers the whole screen smoothly */
+body {
+    @apply min-h-screen bg-base-100 text-base-content antialiased;
+}
