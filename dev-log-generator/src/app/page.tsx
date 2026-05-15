@@ -39,7 +39,7 @@ export default async function Home() {
               "use server";
               await signIn("github", { redirectTo: "/dashboard" });
             }}
-          >
+          > {/* Handoff point to Auth.js for oAuth. Signin is imported from "@/auth" */}
             <button type="submit" className="btn btn-neutral w-full gap-3">
               {/* Standard GitHub SVG directly embedded */}
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
